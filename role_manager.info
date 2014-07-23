@@ -1,0 +1,4 @@
+name = Role Manager
+description = Manage Roles and Permissions for a site.
+package = hfc
+core = 7.x

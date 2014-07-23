@@ -1,0 +1,39 @@
+<?php
+/**
+ * @file
+ * role_manager.install.
+ */
+
+use hfc\role_manager as rm;
+
+if ( ! defined('PERMS_UTILS_PATH') ) {
+  define('PERMS_UTILS_PATH', DRUPAL_ROOT . '/sites/all/libraries/perms_utils/perms_utils.php');
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function role_manager_requirements($phase) {
+  $requirements = array();
+  if ( ! file_exists( PERMS_UTILS_PATH ) ) {
+    $requirements['perms_utils'] = array(
+      'title' => $t('perms_utils'),
+      'description' => t('Library perms_utils from @git required at @path.', array(
+        '@git' => 'ssh://git@git.highlights.com:7999/drops/perms_utils.git',
+        '@path' => dirname(PERMS_UTILS_PATH),
+        )
+      ),
+      'severity' => REQUIREMENT_ERROR,
+    );
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_install().
+ */
+function role_manager_install() {
+  module_load_include('inc', 'role_manager', 'role_manager');
+  rm\revert();
+}

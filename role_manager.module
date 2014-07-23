@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * role_manager.module.
+ */
+
+/**
+ * Implements hook_roles_info().
+ */
+function role_manager_roles_info() {
+  $roles_info_file = variable_get('role_manager_info_file',
+    dirname(DRUPAL_ROOT) . '/settings/roles.inc');
+
+  $roles = array();
+  if ( is_readable($roles_info_file) ) {
+    include $roles_info_file;
+  }
+  return $roles;
+}
