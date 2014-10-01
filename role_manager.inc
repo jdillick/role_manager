@@ -20,8 +20,8 @@ function revert() {
 }
 
 function create_roles() {
-  $roles_names = roles();
-  $existing_roles = user_roles();
+  $roles_names = array_map('strtolower', roles());
+  $existing_roles = array_map('strtolower', user_roles());
 
   foreach ( $roles_names as $role_name ) {
     // only create roles that don't already exist
