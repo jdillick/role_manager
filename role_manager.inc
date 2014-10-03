@@ -53,6 +53,38 @@ function set_permissions() {
     $all_existing_perms);
 }
 
+function check() {
+  $user_roles = user_roles();
+  $roles = array_flip($user_roles);
+  $filtered_in_db = array();
+  foreach (user_role_permissions($user_roles) as $rid => $permissions ) {
+    $permissions = perms\filter_inactive_permissions(array_keys($permissions));
+    $filtered_in_db[$user_roles[$rid]] = $permissions;
+  }
+
+  $differences = array();
+  foreach ( permissions() as $role_name => $permissions ) {
+    $filtered = perms\filter_inactive_permissions($permissions);
+    $differences[$role_name] = array();
+
+    // check for permissions we should have for role, but do not.
+    foreach ( (array) $filtered as $permission ) {
+      if ( ! in_array($permission, $filtered_in_db[$role_name]) ) {
+        $differences[$role_name][$permission] = FALSE;
+      }
+    }
+
+    // check for permissions we should not have, but do.
+    foreach ( (array) $filtered_in_db[$role_name] as $permission ) {
+      if ( ! in_array($permission, $filtered) ) {
+        $differences[$role_name][$permission] = TRUE;
+      }
+    }
+  }
+
+  return $differences;
+}
+
 function permissions() {
   $permissions = &drupal_static(__FUNCTION__);
   if ( ! isset($permissions) ) {
